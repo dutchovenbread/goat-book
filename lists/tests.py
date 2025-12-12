@@ -23,4 +23,5 @@ class HomePageTest(TestCase):
     response = self.client.post('/', data={'item_text': 'A new list item'})
 
     self.assertContains(response, 'A new list item')
+    self.assertTemplateUsed(response, 'home.html')
 
