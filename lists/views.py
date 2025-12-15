@@ -1,5 +1,4 @@
-from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from lists.models import Item
 
 # Create your views here.
@@ -8,6 +7,7 @@ def home_page(request):
     item = Item()
     item.text = request.POST['item_text']
     item.save()
+    return redirect('/')
 
   return render (request,
     'home.html',
