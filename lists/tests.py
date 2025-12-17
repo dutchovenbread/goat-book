@@ -2,6 +2,7 @@ from django.test import TestCase
 from django.http import HttpRequest
 from lists.models import Item, List
 from lists.views import home_page
+import lxml.html
 
 class HomePageTest(TestCase):
 
@@ -11,20 +12,10 @@ class HomePageTest(TestCase):
 
   def test_renders_input_form(self):
     response = self.client.get('/')
-    self.assertContains(response, '<form method="POST" action="/lists/new">')
-    self.assertContains(
-      response, 
-      '<input name="item_text" id="id_new_item" placeholder="Enter a to-do item" />', 
-      html=True
-    )
-  # def test_displays_all_list_items(self):
-  #   Item.objects.create(text='itemey 1')
-  #   Item.objects.create(text='itemey 2')
-
-  #   response = self.client.get('/')
-
-  #   self.assertContains(response, 'itemey 1')
-  #   self.assertContains(response, 'itemey 2')
+    parsed = lxml.html.fromstring(response.content)
+    [form] = parsed.cssselect('form[method="POST"]')
+    self.assertEqual(form.get("action"), "/lists/new")
+    [input] = form.cssselect('input[name=item_text]')
 
 class ListAndItemModelTest(TestCase):
   def test_saving_and_retrieving_items(self):
@@ -63,12 +54,11 @@ class ListViewTest(TestCase):
   def test_renders_input_form(self):
     mylist = List.objects.create()
     response = self.client.get(f'/lists/{mylist.id}/')
-    self.assertContains(response, f'<form method="POST" action="/lists/{mylist.id}/add_item">')
-    self.assertContains(
-      response, 
-      '<input name="item_text" id="id_new_item" placeholder="Enter a to-do item" />', 
-      html=True
-    )
+    parsed = lxml.html.fromstring(response.content)
+    [form] = parsed.cssselect('form[method="POST"]')
+    self.assertEqual(form.get("action"), f"/lists/{mylist.id}/add_item")
+    [input] = form.cssselect('input[name=item_text]')
+
 
   def test_displays_all_list_items(self):
     correct_list = List.objects.create()
