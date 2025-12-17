@@ -15,7 +15,8 @@ class HomePageTest(TestCase):
     parsed = lxml.html.fromstring(response.content)
     [form] = parsed.cssselect('form[method="POST"]')
     self.assertEqual(form.get("action"), "/lists/new")
-    [input] = form.cssselect('input[name=item_text]')
+    intputs = form.cssselect('input[name=item_text]')
+    self.assertIn("item_text", [input.get("name") for input in intputs])
 
 class ListAndItemModelTest(TestCase):
   def test_saving_and_retrieving_items(self):
@@ -57,7 +58,8 @@ class ListViewTest(TestCase):
     parsed = lxml.html.fromstring(response.content)
     [form] = parsed.cssselect('form[method="POST"]')
     self.assertEqual(form.get("action"), f"/lists/{mylist.id}/add_item")
-    [input] = form.cssselect('input[name=item_text]')
+    intputs = form.cssselect('input[name=item_text]')
+    self.assertIn("item_text", [input.get("name") for input in intputs])
 
 
   def test_displays_all_list_items(self):
