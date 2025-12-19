@@ -1,3 +1,5 @@
+ssh-add ~/.ssh/mkh_key
+
 python manage.py runserver
 
 python manage.py test src/lists
