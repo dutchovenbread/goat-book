@@ -1,0 +1,9 @@
+python manage.py runserver
+
+python manage.py test src/lists
+
+python manage.py test src/functional_tests
+
+docker build -t superlists . && docker run -p 8888:8888 --mount type=bind,source="$PWD/src/db.sqlite3",target=/src/db.sqlite3 -it superlists
+
+TEST_SERVER=localhost:8888 ./src/manage.py test ./src/functional_tests/ --failfast
