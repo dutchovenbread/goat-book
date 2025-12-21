@@ -211,4 +211,4 @@ marimo/_lsp/
 __marimo__/
 
 # Target of collectstatic
-static/
+static/container.db.sqlite3
