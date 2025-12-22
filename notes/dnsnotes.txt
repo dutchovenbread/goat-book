@@ -1,0 +1,23 @@
+tddwpy2025.mkhresume.com
+
+NS records:
+ns-1294.awsdns-33.org.
+ns-321.awsdns-40.com.
+ns-918.awsdns-50.net.
+ns-1980.awsdns-55.co.uk.
+
+SOA record:
+ns-1294.awsdns-33.org. awsdns-hostmaster.amazon.com. 1 7200 900 1209600 86400
+
+What I need to do to configure Route 53 to use the hosted zone for the subdomain:
+1. get the name servers for the hosted zone for the subdomain (above)
+2. Choose the name of the hosted zone for the domain (in the other account)
+3. Choose "create record."
+4. Choose simple routing and choose "next"
+5. Choose "Define Simple Record"
+6. Specify the following values
+Name: name of the subdomain (above)
+Record type: choose "NS-Name servers for a hosted zone"
+TTL:172800 seconds
+7. Choose "define simple record" and choose "create records"
+8. Delete any hosted zone records from the domain.
