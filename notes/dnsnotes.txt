@@ -21,3 +21,6 @@ Record type: choose "NS-Name servers for a hosted zone"
 TTL:172800 seconds
 7. Choose "define simple record" and choose "create records"
 8. Delete any hosted zone records from the domain.
+
+Public IP address of the server: 18.220.5.134
+Private IP address of the server: 10.0.1.148
