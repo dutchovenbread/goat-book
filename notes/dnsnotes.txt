@@ -24,3 +24,18 @@ TTL:172800 seconds
 
 Public IP address of the server: 18.220.5.134
 Private IP address of the server: 10.0.1.148
+
+What I need to do to configure Route 53 to route traffic to the server
+
+1. Get the IP address (above)
+2. In Route53, choose hosted zones
+3. Choose "create record"
+4. Specify routing policy, name, value/route traffic to, record type, ttl
+5. Choose "create records"
+
+That seems pretty simple. See if I can do that in CloudFormation.
+
+Successful in the console, but failed with error message "no hosted zone named ..." in CloudFormation
+
+Changed server to allow port 22.
+Changing image of server to Ubuntu 24.04
