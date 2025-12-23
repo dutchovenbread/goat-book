@@ -5,8 +5,8 @@ Resources:
   DNSRecord:
     Type: AWS::Route53::RecordSet
     Properties:
-      HostedZoneName: tdd2py2025.mkhresume.com  # Replace with your hosted zone
-      Name: app.staging.tdd2py2025.mkhresume.com         # Replace with your desired subdomain
+      HostedZoneName: tddwpy2025.mkhresume.com  # Replace with your hosted zone
+      Name: app.staging.tddwpy2025.mkhresume.com         # Replace with your desired subdomain
       Type: A
       TTL: '300'
       ResourceRecords:

@@ -12,10 +12,8 @@ Parameters:
       - t3.medium
 
   LatestAmiId:
-    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
-    Description: Latest Amazon Linux 2023 AMI ID
-    Default: /aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64
-
+    Type: 'AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>'
+    Default: '/aws/service/canonical/ubuntu/server/noble/stable/current/amd64/hvm/ebs-gp3/ami-id'
   KeyName:
     Type: String
     Description: EC2 Key Pair name (optional, for SSH access)
@@ -46,105 +44,6 @@ Resources:
           
           # Update system
           yum update -y
-          # Install Nginx
-          sudo yum install -y nginx
-          # Copy custom Nginx configuration from S3 bucket and start nginx
-          sudo mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak
-          sudo aws s3 cp s3://SuperlistsApp-bucket-20251016/nginx.conf /etc/nginx/nginx.conf
-          # aws s3 cp s3://SuperlistsApp-bucket-20251016/webservice.conf /etc/nginx/default.d/webservice.conf
-          echo "start nginx......"
-          systemctl enable nginx
-          systemctl start nginx
-
-          # # #User creation
-          # adduser --system --no-create-home gunicorn_user
-          # groupadd --system gunicorn_group
-          # usermod -aG gunicorn_group gunicorn_user
-
-          # #User creation
-          sudo adduser --system --no-create-home uwsgi_user
-          sudo groupadd --system uwsgi_group
-          sudo usermod -aG uwsgi_group uwsgi_user
-
-          # Install Python 3 and pip, upgrade pip, install venv, create venv, enable venv
-          echo "Install Python......"
-          sudo yum install -y python3 python3-pip python-devel
-          sudo yum groupinstall -y "Development Tools"
-
-          sudo /usr/bin/python3 -m pip install --upgrade virtualenv
-
-          # start doing app-specific things
-          echo "Create application directory......"
-          sudo mkdir -p /opt/SuperlistsApp
-          sudo chown uwsgi_user:uwsgi_group /opt/SuperlistsApp
-          cd /opt/SuperlistsApp
-          sudo -u uwsgi_user mkdir UPLOAD_FOLDER
-          sudo -u uwsgi_user mkdir test_files
-          sudo -u uwsgi_user bash -c 'echo "Hello world." >> ./test_files/hello.txt'
-          echo "Create virtualenv and install all requirements......"
-          sudo -u uwsgi_user /usr/bin/python3 -m venv /opt/SuperlistsApp/venv
-          sudo -u uwsgi_user /opt/SuperlistsApp/venv/bin/python3 -m pip install --upgrade pip
-          sudo -u uwsgi_user aws s3 cp s3://SuperlistsApp-bucket-20251016/requirements.txt /opt/SuperlistsApp/requirements.txt
-          sudo -u uwsgi_user /opt/SuperlistsApp/venv/bin/pip install -r /opt/SuperlistsApp/requirements.txt
-          echo "Deploy application files......"
-          sudo -u uwsgi_user aws s3 cp s3://SuperlistsApp-bucket-20251016/app.py /opt/SuperlistsApp/app.py
-          sudo -u uwsgi_user aws s3 cp s3://SuperlistsApp-bucket-20251016/wsgi.py /opt/SuperlistsApp/wsgi.py
-          aws s3 cp  s3://SuperlistsApp-bucket-20251016/uwsgi.service /etc/systemd/system/uwsgi.service
-          aws s3 cp s3://SuperlistsApp-bucket-20251016/uwsgi.socket /etc/systemd/system/uwsgi.socket
-          sudo -u uwsgi_user touch /opt/SuperlistsApp/app_errors.log
-
-          ## Note: command for running wsgi manually for testing on port 8000
-          ## sudo -u uwsgi_user /opt/SuperlistsApp/venv/bin/uwsgi --socket :8000 --protocol http --wsgi-file wsgi.py --callable app
-
-          echo "Start uWSGI service......"
-          systemctl daemon-reload
-          systemctl enable uwsgi.socket
-          systemctl start uwsgi.socket
-          systemctl enable uwsgi.service
-          systemctl start uwsgi.service
-
-
-
-
-
-
-
-          #aws s3 cp s3://SuperlistsApp-bucket-20251016/myproject.service /etc/systemd/system/myproject.service
-          #aws s3 cp s3://SuperlistsApp-bucket-20251016/myproject.socket /etc/systemd/system/myproject.socket
-
-          # #Change owner of files to gunicorn_user
-          # mkdir /opt/SuperlistsApp/logs
-          # sudo chown -R gunicorn_user:gunicorn_group /opt/SuperlistsApp
-
-          # # Enable and start the service
-          # systemctl daemon-reload
-          # systemctl enable myproject.socket
-          # systemctl start myproject.socket
-          # systemctl enable myproject.service
-          # systemctl start myproject.service
-
-
-          # systemctl status myproject.socket
-          # systemctl status myproject.service
-
-          # # Copy dummy file from S3 bucket to /usr/share/nginx/html
-          # echo "get resources from S3......"
-          # mkdir -p /usr/share/nginx/html
-          # aws s3 cp s3://SuperlistsApp-bucket-20251016/dummy.html /usr/share/nginx/html/dummy.html
-          
-          # # Copy second dummy file from S3 bucket to /usr/share/nginx/html/secondary
-          # mkdir -p /usr/share/nginx/html/secondary
-          # aws s3 cp s3://SuperlistsApp-bucket-20251016/dummy2.html /usr/share/nginx/html/secondary/dummy2.html
-
-
-
-
-
-
-          # echo "Start the SuperlistsApp executable......"
-          
-
-          
 
       Tags:
         - Key: Name
