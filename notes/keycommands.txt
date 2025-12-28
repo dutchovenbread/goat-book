@@ -12,3 +12,8 @@ docker build -t superlists . && docker run -p 8888:8888 --mount type=bind,source
 
 
 TEST_SERVER=localhost:8888 ./src/manage.py test ./src/functional_tests/ --failfast
+
+
+ssh tddwpy@app.staging.tddwpy2025.mkhresume.com
+
+ansible-playbook --user tddwpy -i app.staging.tddwpy2025.mkhresume.com, infra/deploy-playbook.yaml -vv
