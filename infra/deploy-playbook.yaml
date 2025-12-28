@@ -15,9 +15,29 @@
       become: true
     - name: Reset ssh connection to allow the user/group change to take Effect
       ansible.builtin.meta: reset_connection
-    - name: Run test container
-      ansible.builtin.docker_container:
-        name: testcontainer
-        image: busybox
+      
+    - name: Export container image locally
+      community.docker.docker_image:
+        name: superlists
+        archive_path: /tmp/superlists.tar
+        source: local
+      delegate_to: 127.0.0.1
+
+    - name: Upload image to server
+      ansible.builtin.copy:
+        src: /tmp/superlists.tar
+        dest: /tmp/superlists.tar
+
+    - name: Import container image on server
+      community.docker.docker_image:
+        name: superlists
+        load_path: /tmp/superlists.tar
+        source: load
+        force_source: true
+        state: present
+    - name: Run container
+      community.docker.docker_container:
+        name: superlists
+        image: superlists:latest
         state: started
-        command: echo hello world
+        recreate: true
