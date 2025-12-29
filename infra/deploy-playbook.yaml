@@ -57,7 +57,7 @@
       register: secret_key
     - name: Ensure db.sqlite3 file exists outside container
       ansible.builtin.file:
-        path: "{{ ansible_env.HOME }}/db.sqlite3"
+        path: "{{ ansible_facts['env']['HOME'] }}/db.sqlite3"
         state: touch
         owner: 1234
         mode: '0644'
@@ -66,6 +66,9 @@
       amazon.aws.ec2_metadata_facts:
       register: ec2_metadata
       #when: "'amazon' in group_names"
+    - name: Display the public hostname
+      debug:
+        msg: "Public hostname is {{ ec2_metadata.ansible_facts.ansible_ec2_public_hostname }}"
     - name: Run container
       community.docker.docker_container:
         name: superlists
@@ -77,9 +80,9 @@
           DJANGO_SECRET_KEY: "{{ secret_key.content | b64decode }}"
           DJANGO_ALLOWED_HOST: "{{ inventory_hostname }}"
           DJANGO_DB_PATH: "/home/nonroot/db.sqlite3"
-          OTHER_ALLOWED_HOST: "{{ ec2_metadata.ansible_facts.ec2_public_hostname | default('') }}"
+          OTHER_PUBLIC_ALLOWED_HOST: "{{ ec2_metadata.ansible_facts.ansible_ec2_public_hostname }}"
         mounts:
           - type: bind
-            source: "{{ ansible_env.HOME }}/db.sqlite3"
+            source: "{{ ansible_facts['env']['HOME'] }}/db.sqlite3"
             target: /home/nonroot/db.sqlite3
         ports: 80:8888
