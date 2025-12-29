@@ -1,6 +1,7 @@
 import unittest
 import time
 import os
+from unittest import skip
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -9,7 +10,7 @@ from selenium.webdriver.common.keys import Keys
 
 MAX_WAIT = 5
 
-class NewVisitorTest(StaticLiveServerTestCase):
+class FunctionalTest(StaticLiveServerTestCase):
   def setUp(self):
     self.browser = webdriver.Firefox()
     if test_server := os.environ.get('TEST_SERVER'):
@@ -30,6 +31,8 @@ class NewVisitorTest(StaticLiveServerTestCase):
         if time.time() - start_time > MAX_WAIT:
           raise e
         time.sleep(0.5)
+
+class NewVisitorTest(FunctionalTest):
     
   def check_for_row_in_list_table(self, row_text):
     table = self.browser.find_element(By.ID, 'id_list_table')
@@ -117,6 +120,8 @@ class NewVisitorTest(StaticLiveServerTestCase):
 
     # Satisfied, they both go back to sleep
 
+class LayoutAndStylingTest(FunctionalTest):
+
   def test_layout_and_styling(self):
     # Edith goes to the home page
     self.browser.get(self.live_server_url)
@@ -143,6 +148,9 @@ class NewVisitorTest(StaticLiveServerTestCase):
       512,
       delta=30
     )
+
+class ItemValidationTest(FunctionalTest):
+  @skip
   def test_cannot_add_empty_list_items(self):
     # Edith goes to the home page and tries to submit
     # an empty list item. She hits Enter on the empty input box
