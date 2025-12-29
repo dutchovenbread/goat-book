@@ -55,10 +55,17 @@
       ansible.builtin.slurp:
         src: ~/.secret-key
       register: secret_key
+    - name: Ensure db.sqlite3 file exists outside container
+      ansible.builtin.file:
+        path: "{{ ansible_env.HOME }}/db.sqlite3"
+        state: touch
+        owner: 1234
+        mode: '0644'
+      become: true # needed for ownership change
     - name: Run container
       community.docker.docker_container:
         name: superlists
-        image: superlists:latest
+        image: superlists
         state: started
         recreate: true
         env:
@@ -66,3 +73,8 @@
           DJANGO_SECRET_KEY: "{{ secret_key.content | b64decode }}"
           DJANGO_ALLOWED_HOST: "{{ inventory_hostname }}"
           DJANGO_DB_PATH: "/home/nonroot/db.sqlite3"
+        mounts:
+          - type: bind
+            source: "{{ ansible_env.HOME }}/db.sqlite3"
+            target: /home/nonroot/db.sqlite3
+        ports: 80:8888
