@@ -36,3 +36,10 @@ docker exec -it <containerid> /bin/bash
 
 # Display running logs for superlists container
 docker logs -f superlists
+
+curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169-i http://169.254.169.25export TOKEN=$(curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600")
+
+curl -H "X-aws-ec2-metadata-token: $TOKEN" -i http://169.254.169.254/latest/meta-data/public-hostname
+curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/public-hostname
+
+ec2-18-216-58-146.us-east-2.compute.amazonaws.com

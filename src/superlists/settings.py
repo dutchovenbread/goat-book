@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-mi(t$tb4#vlhv9of0#($-#j@nagn-c66ko5vjna9$2(8-*m8-&
 if "DJANGO_DEBUG_FALSE" in os.environ:
     DEBUG = False
     SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
-    ALLOWED_HOSTS = [os.environ["DJANGO_ALLOWED_HOST"]]
+    ALLOWED_HOSTS = [os.environ["DJANGO_ALLOWED_HOST"],"ec2-18-216-58-146.us-east-2.compute.amazonaws.com"]
     db_path = os.environ["DJANGO_DB_PATH"]
 else:
     DEBUG = True
