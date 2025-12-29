@@ -1,19 +1,45 @@
+# add my ssh key so that I can passwordless connect to GitHub
 ssh-add ~/.ssh/mkh_key
 
+# Run python server locally
 python manage.py runserver
 
+# Run python unit tests locally
 python manage.py test src/lists
 
+# run python functional tests locally
 python manage.py test src/functional_tests
 
+# docker build commands
 docker build -t superlists . && docker run -p 8888:8888 --mount type=bind,source="$PWD/src/db.sqlite3",target=/src/db.sqlite3 -it superlists
 docker build -t superlists . && docker run -p 8888:8888 --mount type=bind,source="$PWD/src/db.sqlite3",target=/src/db.sqlite3 -e DJANGO_SECRET_KEY=gbrooklyntoqueens -e DJANGO_ALLOWED_HOST=localhost -it superlists
 docker build -t superlists . && docker run -p 8888:8888 --mount type=bind,source="$PWD/container.db.sqlite3",target=/home/nonroot/db.sqlite3 -e DJANGO_SECRET_KEY=gbrooklyntoqueens -e DJANGO_ALLOWED_HOST=localhost -e DJANGO_DB_PATH=/home/nonroot/db.sqlite3 -it superlists
 
-
+# Run functional tests against a local server (such as a docker container) listening on port 8888
 TEST_SERVER=localhost:8888 ./src/manage.py test ./src/functional_tests/ --failfast
 
-
+# SSH to my server
 ssh tddwpy@app.staging.tddwpy2025.mkhresume.com
 
+# Run ansible playbook against my server
 ansible-playbook --user tddwpy -i app.staging.tddwpy2025.mkhresume.com, infra/deploy-playbook.yaml -vv
+
+# Run functional tests against the server
+TEST_SERVER=applstaging.tddwpy2025.mkhresume.com python ./src/manage.py test ./src/functional_tests/
+
+# Manually make a request to the server
+curl -iv app.staging.tddwpy2025.mkhresume.com
+
+# Log into the container from the server.
+docker exec -it 7eebbd3e765e /bin/bash
+docker exec -it <containerid> /bin/bash
+
+# Display running logs for superlists container
+docker logs -f superlists
+
+curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169-i http://169.254.169.25export TOKEN=$(curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600")
+
+curl -H "X-aws-ec2-metadata-token: $TOKEN" -i http://169.254.169.254/latest/meta-data/public-hostname
+curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/public-hostname
+
+ec2-18-216-58-146.us-east-2.compute.amazonaws.com

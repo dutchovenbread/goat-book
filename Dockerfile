@@ -9,4 +9,4 @@ RUN python manage.py collectstatic
 ENV DJANGO_DEBUG_FALSE=1
 RUN adduser --uid 1234 nonroot
 USER nonroot
-CMD ["gunicorn", "--bind", ":8888", "superlists.wsgi:application"]
+CMD ["gunicorn", "--bind", ":8888","--access-logfile", "-", "--error-logfile", "-", "--log-level", "info", "superlists.wsgi:application"]
