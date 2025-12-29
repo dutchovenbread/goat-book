@@ -33,6 +33,8 @@ else:
     SECRET_KEY = 'insecure-key-for-dev'
     ALLOWED_HOSTS = []
     db_path = BASE_DIR / 'db.sqlite3'
+if "OTHER_PUBLIC_ALLOWED_HOST" in os.environ:
+    ALLOWED_HOSTS.append(os.environ["OTHER_PUBLIC_ALLOWED_HOST"])
 
 
 # Application definition
