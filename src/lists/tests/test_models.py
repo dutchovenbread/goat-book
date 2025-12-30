@@ -38,10 +38,10 @@ class ListAndItemModelTest(TestCase):
     item = Item(list=mylist, text='')
     with self.assertRaises(ValidationError):
       item.full_clean()
+      item.save()
 
   def test_cannot_save_null_list_items(self):
     mylist = List.objects.create()
     item = Item(list=mylist, text=None)
     with self.assertRaises(IntegrityError):
       item.save()
-      # item.full_clean()
