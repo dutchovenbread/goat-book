@@ -30,8 +30,6 @@ class ItemValidationTest(FunctionalTest):
     inputbox.send_keys(Keys.ENTER)
     self.wait_for_row_in_list_table('1: Purchase milk')
 
-    return # TODO: re-enable the rest of this test later
-
     # Perversely, she now decides to submit a second blank list item
     inputbox = self.browser.find_element(By.ID, 'id_new_item')
     inputbox.send_keys(Keys.ENTER)
