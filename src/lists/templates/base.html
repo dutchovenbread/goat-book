@@ -13,20 +13,11 @@
         <div class="col-lg-6 text-center">
           <h1 class="display-1 mb-4">{% block header_text %}{% endblock %}</h1>
           <form method="POST" action="{% block form_action %}{% endblock %}">
-            {% if form %}
-              {{ form.text }}
-            {% else %}
-              <input
-                class = "form-control form-control-lg {% if error %}is-invalid{% endif %}"
-                name="text"
-                id="id_text"
-                placeholder="Enter a to-do item"
-              />
+            {{ form.text }}
+            {% csrf_token %}
+            {% if form.errors %}
+              <div class="invalid-feedback">{{ form.errors.text }}</div>
             {% endif %}
-          {% csrf_token %}
-          {% if error %}
-            <div class="invalid-feedback">{{ error }}</div>
-          {% endif %}
           </form>
         </div>
       </div>
