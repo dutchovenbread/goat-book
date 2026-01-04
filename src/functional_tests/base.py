@@ -11,6 +11,8 @@ from selenium.webdriver.common.keys import Keys
 MAX_WAIT = 5
 
 class FunctionalTest(StaticLiveServerTestCase):
+  def get_item_input_box(self):
+    return self.browser.find_element(By.ID, 'id_text')
   def setUp(self):
     self.browser = webdriver.Firefox()
     if test_server := os.environ.get('TEST_SERVER'):

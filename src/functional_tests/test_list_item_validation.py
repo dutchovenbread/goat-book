@@ -11,38 +11,37 @@ class ItemValidationTest(FunctionalTest):
     # Edith goes to the home page and tries to submit
     # an empty list item. She hits Enter on the empty input box
     self.browser.get(self.live_server_url)
-    inputbox = self.browser.find_element(By.ID, 'id_new_item')
+    inputbox = self.get_item_input_box()
     inputbox.send_keys(Keys.ENTER)
 
-    # The home page refreshes, and there is an error message
-    # saying that list items cannot be blank
-    # self.wait_for_row_in_list_table("You can't have an empty list item")
+    # The browser intercepts the request, and does not load the list page
     self.wait_for(
-      lambda: self.assertEqual(
-        self.browser.find_element(By.CSS_SELECTOR, '.invalid-feedback').text,
-        "You can't have an empty list item"
-      )
+      lambda: 
+        self.browser.find_element(By.CSS_SELECTOR, '#id_text:invalid')
     )
 
     # She tries again with some text for the item, which now works
-    inputbox = self.browser.find_element(By.ID, 'id_new_item')
+    inputbox = self.get_item_input_box()
     inputbox.send_keys('Purchase milk')
+    self.wait_for(
+      lambda:
+        self.browser.find_element(By.CSS_SELECTOR, '#id_text:valid')
+    )
+    
     inputbox.send_keys(Keys.ENTER)
     self.wait_for_row_in_list_table('1: Purchase milk')
 
     # Perversely, she now decides to submit a second blank list item
-    inputbox = self.browser.find_element(By.ID, 'id_new_item')
+    inputbox = self.get_item_input_box()
     inputbox.send_keys(Keys.ENTER)
 
     # She receives a similar warning on the list page
     self.wait_for(
-      lambda: self.assertEqual(
-        self.browser.find_element(By.CSS_SELECTOR, '.invalid-feedback').text,
-        "You can't have an empty list item"
-      )
+      lambda: 
+        self.browser.find_element(By.CSS_SELECTOR, '#id_text:invalid')
     )
 
     # And she can correct it by filling some text in
-    self.browser.find_element(By.ID, 'id_new_item').send_keys('Make tea')
-    self.browser.find_element(By.ID, 'id_new_item').send_keys(Keys.ENTER)
+    self.get_item_input_box().send_keys('Make tea')
+    self.get_item_input_box().send_keys(Keys.ENTER)
     self.wait_for_row_in_list_table('2: Make tea')
