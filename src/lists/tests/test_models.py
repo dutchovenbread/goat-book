@@ -6,7 +6,8 @@ from lists.models import Item, List
 from lists.views import home_page
 import lxml.html
 
-class ListAndItemModelTest(TestCase):
+
+class ItemModelTest(TestCase):
   def test_default_text(self):
     item = Item()
     self.assertEqual(item.text, '')
@@ -31,10 +32,6 @@ class ListAndItemModelTest(TestCase):
     with self.assertRaises(IntegrityError):
       item.save()
 
-  def test_get_absolute_url(self):
-    mylist = List.objects.create()
-    self.assertEqual(mylist.get_absolute_url(), f'/lists/{mylist.id}/')
-
   def test_duplicate_items_are_invalid(self):
     mylist = List.objects.create()
     Item.objects.create(list=mylist, text='duplicate')
@@ -49,3 +46,9 @@ class ListAndItemModelTest(TestCase):
     item = Item(list=list2, text='duplicate')
     # This should not raise
     item.full_clean()
+
+class ListModelTest(TestCase):
+  def test_get_absolute_url(self):
+    mylist = List.objects.create()
+    self.assertEqual(mylist.get_absolute_url(), f'/lists/{mylist.id}/')
+ 
