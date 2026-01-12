@@ -1,13 +1,22 @@
+console.log("Spec.js loading");
+
 describe('Superlists JavaScript', () => {
+  const inputId = "id_text";
+  const errorClass = "invalid-feedback";
+  const inputSelector = `#${inputId}`;
+  const errorSelector = `.${errorClass}`;
 
   let testDiv;
+  let textInput;
+  let errorMsg;
 
   beforeEach(() => {
+    console.log("beforeEch");
     testDiv = document.createElement("div");
     testDiv.innerHTML=`
       <form>
         <input 
-          id="id_text" 
+          id="${inputId}" 
           name="text"
           class="form-control form-control-lg is-invalid"
           placeholder="Enter a to-do item"
@@ -15,12 +24,14 @@ describe('Superlists JavaScript', () => {
           aria-describedby="id_text_feedback"
           required
         />
-        <div id="id_text_feedback" class="invalid-feedback">
+        <div id="id_text_feedback" class="${errorClass}">
           An error message
         </div>
       </form>
     `;
     document.body.appendChild(testDiv);
+    textInput = document.querySelector(inputSelector);
+    errorMsg = document.querySelector(errorSelector);
   });
 
   afterEach(() => {
@@ -28,18 +39,18 @@ describe('Superlists JavaScript', () => {
   });
 
   it("should have a useful html fixture", () => {
-    const errorMsg = document.querySelector(".invalid-feedback");
     expect(errorMsg.checkVisibility()).toBe(true);
   });
 
-  it("can hide things manually and check visibility in tests", () => {
-    const textInput = document.querySelector("#id_text");
-    const errorMsg = document.querySelector(".invalid-feedback");
-
+  it("should hide error message on input", () => {
+    initialize(inputSelector, errorSelector);
     textInput.dispatchEvent(new InputEvent("input"));
-    
     expect(errorMsg.checkVisibility()).toBe(false);
   })
 
+  it("should not hide error message before event is fired", () => {
+    initialize(inputSelector, errorSelector);
+    expect(errorMsg.checkVisibility()).toBe(true);
+  })
 
 });
