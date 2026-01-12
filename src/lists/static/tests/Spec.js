@@ -1,0 +1,11 @@
+describe('Superlists JavaScript', () => {
+
+  it('should have working maths', () => {
+    expect(1 + 1).toEqual(2);
+  });
+
+  it('should have more working maths', () => {
+    expect(2 * 2).toEqual(5);
+  })
+
+});
