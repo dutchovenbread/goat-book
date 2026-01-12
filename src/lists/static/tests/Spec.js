@@ -1,11 +1,42 @@
 describe('Superlists JavaScript', () => {
 
-  it('should have working maths', () => {
-    expect(1 + 1).toEqual(2);
+  let testDiv;
+
+  beforeEach(() => {
+    testDiv = document.createElement("div");
+    testDiv.innerHTML=`
+      <form>
+        <input 
+          id="id_text" 
+          name="text"
+          class="form-control form-control-lg is-invalid"
+          placeholder="Enter a to-do item"
+          value="Value as submitted"
+          aria-describedby="id_text_feedback"
+          required
+        />
+        <div id="id_text_feedback" class="invalid-feedback">
+          An error message
+        </div>
+      </form>
+    `;
+    document.body.appendChild(testDiv);
   });
 
-  it('should have more working maths', () => {
-    expect(2 * 2).toEqual(5);
+  afterEach(() => {
+    testDiv.remove();
+  });
+
+  it("should have a useful html fixture", () => {
+    const errorMsg = document.querySelector(".invalid-feedback");
+    expect(errorMsg.checkVisibility()).toBe(true);
+  });
+
+  it("can hide things manually and check visibility in tests", () => {
+    const errorMsg = document.querySelector(".invalid-feedback");
+    errorMsg.style.display = "none";
+    expect(errorMsg.checkVisibility()).toBe(false);
   })
+
 
 });
