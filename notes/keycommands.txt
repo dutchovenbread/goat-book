@@ -31,7 +31,7 @@ ssh tddwpy@app.staging.tddwpy2025.mkhresume.com
 ansible-playbook --user tddwpy -i app.staging.tddwpy2025.mkhresume.com, infra/deploy-playbook.yaml -vv
 
 # Run functional tests against the server
-TEST_SERVER=applstaging.tddwpy2025.mkhresume.com python ./src/manage.py test ./src/functional_tests/
+TEST_SERVER=app.staging.tddwpy2025.mkhresume.com python ./src/manage.py test ./src/functional_tests/
 
 # Manually make a request to the server
 curl -iv app.staging.tddwpy2025.mkhresume.com
