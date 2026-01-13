@@ -2,13 +2,19 @@
 ssh-add ~/.ssh/mkh_key
 
 # Run python server locally
-python manage.py runserver
+python src/manage.py runserver
 
 # Run python unit tests locally
 python manage.py test src/lists
 
 # run python functional tests locally
 python manage.py test src/functional_tests
+
+# Run all python tests locally
+python src/manage.py test lists functional_tests
+
+# Run javascript tests locally
+firefox ./src/lists/static/tests/SpecRunner.html
 
 # docker build commands
 docker build -t superlists . && docker run -p 8888:8888 --mount type=bind,source="$PWD/src/db.sqlite3",target=/src/db.sqlite3 -it superlists
@@ -45,3 +51,16 @@ curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-da
 ec2-18-216-58-146.us-east-2.compute.amazonaws.com
 
 python ./src/manage.py dbshell
+
+# docker build in chapter 18
+docker build -t superlists . && docker run \
+-p 8888:8888
+--mount type=bind,source="$PWD/src/db.sqlite",target=/src/db.sqlite3 \
+-e DJANGO_SECRET_KEY=gbrooklyntoqueens \
+-e DJANGO_ALLOWED_HOST=applstaging.tddwpy2025.mkhresume.com \
+-e DJANGO_DB_PATH=/home/nonroot/db.sqlite3 \
+-it superlists
+
+Something wrong with what's above, so I used my old notes:
+docker build -t superlists . && docker run -p 8888:8888 --mount type=bind,source="$PWD/container.db.sqlite3",target=/home/nonroot/db.sqlite3 -e DJANGO_SECRET_KEY=gbrooklyntoqueens -e DJANGO_ALLOWED_HOST=localhost -e DJANGO_DB_PATH=/home/nonroot/db.sqlite3 -it superlists
+
