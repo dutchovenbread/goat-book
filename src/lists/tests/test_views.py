@@ -1,4 +1,5 @@
 from unittest import skip
+from urllib import response
 from django.test import TestCase
 from django.http import HttpRequest
 from lists.forms import (
@@ -17,13 +18,13 @@ class HomePageTest(TestCase):
     self.assertTemplateUsed(response, 'home.html')
 
   def test_renders_input_form(self):
-    mylist = List.objects.create()
-    response = self.client.get(f'/lists/{mylist.id}/')
+    response = self.client.get("/")
     parsed = lxml.html.fromstring(response.content)
-    [form] = parsed.cssselect('form[method="POST"]')
-    self.assertEqual(form.get("action"), f"/lists/{mylist.id}/")
-    intputs = form.cssselect('input[name=text]')
-    self.assertIn("text", [input.get("name") for input in intputs])
+    forms = parsed.cssselect("form[method=POST]")
+    self.assertIn("/lists/new", [form.get("action") for form in forms])
+    [form] = [form for form in forms if form.get("action") == "/lists/new"]
+    inputs = form.cssselect("input")
+    self.assertIn("text", [input.get("name") for input in inputs])
 
 class ListViewTest(TestCase):
   def test_uses_list_template(self):
@@ -35,9 +36,10 @@ class ListViewTest(TestCase):
     mylist = List.objects.create()
     response = self.client.get(f'/lists/{mylist.id}/')
     parsed = lxml.html.fromstring(response.content)
-    [form] = parsed.cssselect('form[method="POST"]')
-    self.assertEqual(form.get("action"), f"/lists/{mylist.id}/")
-    intputs = form.cssselect('input[name=text]')
+    forms = parsed.cssselect('form[method="POST"]')
+    self.assertIn(f"/lists/{mylist.id}/", [form.get("action") for form in forms])
+    [form] = [form for form in forms if form.get("action") == f"/lists/{mylist.id}/"]
+    intputs = form.cssselect('input')
     self.assertIn("text", [input.get("name") for input in intputs])
 
 
