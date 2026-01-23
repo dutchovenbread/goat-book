@@ -8,6 +8,8 @@ from selenium.webdriver.common.by import By
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.common.keys import Keys
 
+from .container_commands import reset_database
+
 MAX_WAIT = 5
 
 class FunctionalTest(StaticLiveServerTestCase):
@@ -19,6 +21,7 @@ class FunctionalTest(StaticLiveServerTestCase):
     self.test_server = os.environ.get('TEST_SERVER')
     if self.test_server:
       self.live_server_url = 'http://' + self.test_server
+      reset_database(self.test_server)
 
   def tearDown(self):
     self.browser.quit()
