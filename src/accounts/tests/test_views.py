@@ -1,6 +1,6 @@
 from unittest import mock
 
-from django.contrib import auth
+from django.contrib import auth, messages
 from django.test import TestCase
 
 from accounts.models import Token
@@ -63,6 +63,25 @@ class LoginViewTest(TestCase):
   def test_redirects_to_home_page(self):
     response = self.client.get("/accounts/login?token=abcd123")
     self.assertRedirects(response, "/")
+
+  @mock.patch("accounts.views.auth")
+  def test_calls_authenticate_with_uid_from_get_request(self, mock_auth):
+    self.client.get("/accounts/login?token=abcd123")
+    self.assertEqual(
+      mock_auth.authenticate.call_args,
+      mock.call(uid="abcd123")
+    )
+
+  @mock.patch("accounts.views.auth")
+  def test_calls_auth_login_with_user_if_there_is_one(self, mock_auth):
+    response = self.client.get("/accounts/login?token=abcd123")
+    self.assertEqual(
+      mock_auth.login.call_args,
+      mock.call(
+        response.wsgi_request,
+        mock_auth.authenticate.return_value,
+      )
+    )
 
   def DONT_test_logs_in_if_given_valid_token(self):
     anon_user = auth.get_user(self.client)

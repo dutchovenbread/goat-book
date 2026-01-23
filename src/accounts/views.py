@@ -32,7 +32,9 @@ def login(request):
   #   messages.error(request, "Invalid login link, please request a new one")
 
   # TODO: call authenticate(),
-  # then auth.login() with the user if we get one,
+  if user := auth.authenticate(uid=request.GET["token"]):
+    # then auth.login() with the user if we get one,
+    auth.login(request, user)
   # or messages.error() if we get None
 
   return redirect("/")
