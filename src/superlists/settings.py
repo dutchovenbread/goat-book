@@ -92,6 +92,9 @@ DATABASES = {
 }
 
 AUTH_USER_MODEL = "accounts.User"
+AUTHENTICATION_BACKENDS = [
+    "accounts.authentication.PasswordlessAuthenticationBackend",
+]
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -154,3 +157,9 @@ LOGGING = {
   },
 
 }
+
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_HOST_USER = "hunter.michael.k@gmail.com"
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
