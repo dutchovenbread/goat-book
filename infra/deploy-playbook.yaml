@@ -80,9 +80,14 @@
           DJANGO_SECRET_KEY: "{{ secret_key.content | b64decode }}"
           DJANGO_ALLOWED_HOST: "{{ inventory_hostname }}"
           DJANGO_DB_PATH: "/home/nonroot/db.sqlite3"
+          EMAIL_PASSWORD: "{{ lookup('env', 'EMAIL_PASSWORD') }}"
           OTHER_PUBLIC_ALLOWED_HOST: "{{ ec2_metadata.ansible_facts.ansible_ec2_public_hostname }}"
         mounts:
           - type: bind
             source: "{{ ansible_facts['env']['HOME'] }}/db.sqlite3"
             target: /home/nonroot/db.sqlite3
         ports: 80:8888
+    - name: Run migration inside container
+      community.docker.docker_container_exec:
+        container: superlists
+        command: python ./manage.py migrate
