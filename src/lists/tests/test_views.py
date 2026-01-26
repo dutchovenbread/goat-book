@@ -11,6 +11,8 @@ from django.utils import html
 from lists.views import home_page
 import lxml.html
 
+from accounts.models import User
+
 class HomePageTest(TestCase):
 
   def test_uses_home_template(self):
@@ -160,7 +162,24 @@ class NewListTest(TestCase):
     expected_error = html.escape(EMPTY_ITEM_ERROR)
     self.assertContains(response, expected_error)
 
+  def test_list_owner_is_saved_if_user_is_authenticated(self):
+    user = User.objects.create(email="a@b.com")
+    self.client.force_login(user)
+    self.client.post(
+      '/lists/new',
+      data={'text': 'A new list item'}
+    )
+    new_list = List.objects.first()
+    self.assertEqual(new_list.owner, user)
+
 class MyListsTest(TestCase):
   def test_my_lists_url_renders_my_lists_template(self):
+    User.objects.create(email="a@b.com")
     response = self.client.get('/lists/users/a@b.com/')
     self.assertTemplateUsed(response, 'my_lists.html')
+
+  def test_passes_correct_owner_to_template(self):
+    User.objects.create(email="wrong@owner.com")
+    correct_user = User.objects.create(email="a@b.com")
+    response = self.client.get('/lists/users/a@b.com/')
+    self.assertEqual(response.context['owner'], correct_user)
