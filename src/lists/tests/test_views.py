@@ -160,3 +160,7 @@ class NewListTest(TestCase):
     expected_error = html.escape(EMPTY_ITEM_ERROR)
     self.assertContains(response, expected_error)
 
+class MyListsTest(TestCase):
+  def test_my_lists_url_renders_my_lists_template(self):
+    response = self.client.get('/lists/users/a@b.com/')
+    self.assertTemplateUsed(response, 'my_lists.html')
