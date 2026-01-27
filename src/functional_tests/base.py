@@ -21,6 +21,19 @@ MAX_WAIT = 5
 
 SCREEN_DUMP_LOCATION = Path(__file__).absolute().parent / "screendumps"
 
+def wait (fn):
+  def modified_fn(*args, **kwargs):
+    start_time = time.time()
+    while True:
+      try:
+        return fn(*args, **kwargs)
+      except (AssertionError, WebDriverException) as e:
+        if time.time() - start_time > MAX_WAIT:
+          raise e
+        time.sleep(0.5)
+  return modified_fn
+
+
 class FunctionalTest(StaticLiveServerTestCase):
   def get_item_input_box(self):
     return self.browser.find_element(By.ID, 'id_text')
@@ -59,17 +72,6 @@ class FunctionalTest(StaticLiveServerTestCase):
     timestamp = datetime.now().isoformat().replace(":", "")[:19]
     return f"{self.__class__.__name__}.{self._testMethodName}-{timestamp}.{extension}"
 
-  def wait (fn):
-    def modified_fn(*args, **kwargs):
-      start_time = time.time()
-      while True:
-        try:
-          return fn(*args, **kwargs)
-        except (AssertionError, WebDriverException) as e:
-          if time.time() - start_time > MAX_WAIT:
-            raise e
-          time.sleep(0.5)
-    return modified_fn
 
   @wait
   def wait_for(self, fn):
