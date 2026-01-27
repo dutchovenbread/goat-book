@@ -1,6 +1,8 @@
-import unittest
-import time
 import os
+import time
+import unittest
+from datetime import datetime
+from pathlib import Path
 from unittest import skip
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
@@ -11,6 +13,8 @@ from selenium.webdriver.common.keys import Keys
 from .container_commands import reset_database
 
 MAX_WAIT = 5
+
+SCREEN_DUMP_LOCATION = Path(__file__).absolute().parent / "screendumps"
 
 class FunctionalTest(StaticLiveServerTestCase):
   def get_item_input_box(self):
@@ -24,7 +28,31 @@ class FunctionalTest(StaticLiveServerTestCase):
       reset_database(self.test_server)
 
   def tearDown(self):
+    if self._test_has_failed():
+      if not SCREEN_DUMP_LOCATION.exists():
+        SCREEN_DUMP_LOCATION.mkdir(parents=True)
+      self.take_screenshot()
+      self.dump_html()
     self.browser.quit()
+    super().tearDown()
+
+  def _test_has_failed(self):
+    # slightly obscure but couldn't find a better way
+    return self._outcome.result.failures or self._outcome.result.errors
+  
+  def take_screenshot(self):
+    path = SCREEN_DUMP_LOCATION / self._get_filename("png")
+    print("screenshotting to", path)
+    self.browser.get_screenshot_as_file(str(path))
+
+  def dump_html(self):
+    path = SCREEN_DUMP_LOCATION / self._get_filename("html")
+    print("dumping page HTML to", path)
+    path.write_text(self.browser.page_source)
+
+  def _get_filename(self, extension):
+    timestamp = datetime.now().isoformat().replace(":", "")[:19]
+    return f"{self.__class__.__name__}.{self._testMethodName}-{timestamp}.{extension}"
 
   def wait (fn):
     def modified_fn(*args, **kwargs):

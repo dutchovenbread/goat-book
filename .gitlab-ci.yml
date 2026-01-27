@@ -27,3 +27,7 @@ test:
     - apt update -y && apt install -y firefox-esr
     - pip install selenium
     - cd src && python manage.py test
+  artifacts:
+    when: always
+    paths:
+      - src/functional_tests/screendumps/
