@@ -72,3 +72,16 @@ ansible-playbook --user tddwpy -i app.staging.tddwpy2025.mkhresume.com, infra/de
 
 # Run functional tests against the server
 TEST_SERVER=app.staging.tddwpy2025.mkhresume.com python ./src/manage.py test ./src/functional_tests/
+
+# Run test container locally:
+docker build -f infra/Dockerfile.ci -t debug-ci . &&  docker run -it debug-ci
+
+The above reproduced the error below:
+selenium.common.exceptions.WebDriverException: Message: Process unexpectedly closed with status 1
+
+#Next command in chapter 25
+docker build -f infra/Dockerfile.ci -t debug-ci --platform=linux/amd64 . && docker run --platform=linux/amd64 -it debug-ci
+
+#Tell Firefox to run headless
+docker build -f infra/Dockerfile.ci -t debug-ci --platform=linux/amd64 . && docker run -e MOZ_HEADLESS=1 --platform=linux/amd64 -it debug-ci
+
