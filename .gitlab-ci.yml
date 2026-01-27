@@ -1,24 +1,21 @@
-# Use the same image as our Dockerfile
-image: python:slim
+test-python:
+  # Use the same image as our Dockerfile
+  image: python:slim
 
-# These two settings let us cache pip-installed packages,
-# it came from the default template
-variables:
-  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
-  # Make Mozilla Firefox run headless
-  MOZ_HEADLESS: "1"
-cache:
-  paths:
-    - .cache/pip
+  variables:
+    PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+    # Make Mozilla Firefox run headless
+    MOZ_HEADLESS: "1"
+  cache:
+    paths:
+      - .cache/pip
+  # "setUp" phase, before the main build
+  before_script:
+    - python --version; pip --version
+    - pip install virtualenv
+    - virtualenv .venv
+    - source .venv/bin/activate
 
-# "setUp" phase, before the main build
-before_script:
-  - python --version; pip --version
-  - pip install virtualenv
-  - virtualenv .venv
-  - source .venv/bin/activate
-
-test:
   script:
     - pip install -r requirements.txt
     # unit tests
@@ -31,3 +28,12 @@ test:
     when: always
     paths:
       - src/functional_tests/screendumps/
+test-js:
+  image: node:slim
+  script:
+    - apt update -y && apt install -y firefox-esr
+    - cd src/lists/static
+    - npm install
+    - npx jasmine-browser-runner runSpecs
+      --config=./tests/jasmine-browser-runner.config.mjs
+      
