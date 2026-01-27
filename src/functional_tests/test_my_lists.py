@@ -78,5 +78,3 @@ class MyListsTest(FunctionalTest):
         self.browser.find_elements(By.LINK_TEXT, "My lists"), []
       )
     )
-
-    self.fail()
