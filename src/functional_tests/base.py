@@ -4,17 +4,35 @@ import unittest
 from datetime import datetime
 from pathlib import Path
 from unittest import skip
+from django.conf import settings
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.common.keys import Keys
 
+from .container_commands import create_session_on_server
+from .management.commands.create_session import create_pre_authenticated_session
+
+
 from .container_commands import reset_database
 
 MAX_WAIT = 5
 
 SCREEN_DUMP_LOCATION = Path(__file__).absolute().parent / "screendumps"
+
+def wait (fn):
+  def modified_fn(*args, **kwargs):
+    start_time = time.time()
+    while True:
+      try:
+        return fn(*args, **kwargs)
+      except (AssertionError, WebDriverException) as e:
+        if time.time() - start_time > MAX_WAIT:
+          raise e
+        time.sleep(0.5)
+  return modified_fn
+
 
 class FunctionalTest(StaticLiveServerTestCase):
   def get_item_input_box(self):
@@ -54,17 +72,6 @@ class FunctionalTest(StaticLiveServerTestCase):
     timestamp = datetime.now().isoformat().replace(":", "")[:19]
     return f"{self.__class__.__name__}.{self._testMethodName}-{timestamp}.{extension}"
 
-  def wait (fn):
-    def modified_fn(*args, **kwargs):
-      start_time = time.time()
-      while True:
-        try:
-          return fn(*args, **kwargs)
-        except (AssertionError, WebDriverException) as e:
-          if time.time() - start_time > MAX_WAIT:
-            raise e
-          time.sleep(0.5)
-    return modified_fn
 
   @wait
   def wait_for(self, fn):
@@ -96,3 +103,20 @@ class FunctionalTest(StaticLiveServerTestCase):
     self.get_item_input_box().send_keys(Keys.ENTER)
     item_number = num_rows + 1
     self.wait_for_row_in_list_table(f"{item_number}: {item_text}")
+
+  def create_pre_authenticated_session(self,email):
+    if self.test_server:
+      session_key = create_session_on_server(self.test_server,email)
+    else:
+      session_key = create_pre_authenticated_session(email)
+
+    ## to set a cookie we need to first visit the domain.
+    ## 404 pages load the quickest!
+    self.browser.get(self.live_server_url + "/404_no_such_url/")
+    self.browser.add_cookie(
+      dict(
+        name=settings.SESSION_COOKIE_NAME,
+        value=session_key,
+        path="/",
+      )
+    )
