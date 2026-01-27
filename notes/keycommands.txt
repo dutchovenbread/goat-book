@@ -82,4 +82,6 @@ selenium.common.exceptions.WebDriverException: Message: Process unexpectedly clo
 #Next command in chapter 25
 docker build -f infra/Dockerfile.ci -t debug-ci --platform=linux/amd64 . && docker run --platform=linux/amd64 -it debug-ci
 
+#Tell Firefox to run headless
+docker build -f infra/Dockerfile.ci -t debug-ci --platform=linux/amd64 . && docker run -e MOZ_HEADLESS=1 --platform=linux/amd64 -it debug-ci
 

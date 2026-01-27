@@ -5,6 +5,8 @@ image: python:slim
 # it came from the default template
 variables:
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+  # Make Mozilla Firefox run headless
+  MOZ_HEADLESS: "1"
 cache:
   paths:
     - .cache/pip
