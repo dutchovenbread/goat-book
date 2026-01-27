@@ -216,3 +216,5 @@ container.db.sqlite3
 .secret
 
 screendumps/
+
+node_modules/
