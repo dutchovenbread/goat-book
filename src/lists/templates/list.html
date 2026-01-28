@@ -17,6 +17,17 @@
       </table>
     </div>
   </div>
+  <div class="row justify-content-right">
+    <div class="col-lg-6 text-end">
+      <p>Share this list:</p>
+      <form method="POST" action="{% url 'share_list' list.id %}">
+        {% csrf_token %}
+        <div class="input-group mb-3">
+          <input type="email" name="sharee" class="form-control" placeholder="your-friend@example.com">
+        </div>
+      </form>
+    </div>
+  </div>
 {% endblock %}
 
 {% block scripts %}

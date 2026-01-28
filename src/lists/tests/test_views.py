@@ -183,3 +183,41 @@ class MyListsTest(TestCase):
     correct_user = User.objects.create(email="a@b.com")
     response = self.client.get('/lists/users/a@b.com/')
     self.assertEqual(response.context['owner'], correct_user)
+
+class ShareListTest(TestCase):
+  def test_share_list_redirects_to_list_view(self):
+    list_ = List.objects.create()
+    response = self.client.post(f'/lists/lists/{list_.id}/share', data={
+      'sharee_email': 'sharee@example.com'
+    })
+    self.assertRedirects(response, f'/lists/{list_.id}/')
+
+  def test_share_list_adds_sharee_to_list(self):
+    list_ = List.objects.create()
+    sharer = User.objects.create(email="sharer@example.com")
+    self.client.force_login(sharer)
+    sharee = User.objects.create(email="sharee@example.com")
+    self.client.post(f'/lists/lists/{list_.id}/share', 
+      data={
+        'sharee_email': sharee.email
+      }
+    )
+    self.assertIn(sharee, list_.shared_with.all())
+
+
+  # def test_sharee_displayed_after_sharing_a_list(self):
+  #   list_ = List.objects.create()
+  #   sharer = User.objects.create(email="sharer@example.com")
+  #   self.client.force_login(sharer)
+  #   sharee = User.objects.create(email="sharee@example.com")
+  #   response = self.client.post(f'/lists/lists/{list_.id}/share', 
+  #     data={
+  #       'sharee_email': sharee.email
+  #     }
+  #   )
+  #   parsed = lxml.html.fromstring(response.content)
+    
+    
+  # def test_sharer_displayed_after_sharing_a_list(self):
+  #   list_ = List.objects.create()
+  #   sharer = User.objects.create(email="sharer@example.com")
