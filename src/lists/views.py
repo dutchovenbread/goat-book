@@ -44,4 +44,8 @@ def my_lists(request, email):
   return render(request, "my_lists.html", {"owner": owner})
 
 def share_list(request, list_id):
+  our_list = List.objects.get(id=list_id)
+  email = request.POST['sharee']
+  user = User.objects.get(email=email)
+  our_list.shared_with.add(user)
   return redirect(f'/lists/{list_id}/')

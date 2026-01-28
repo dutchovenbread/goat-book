@@ -186,9 +186,10 @@ class MyListsTest(TestCase):
 
 class ShareListTest(TestCase):
   def test_share_list_redirects_to_list_view(self):
+    User.objects.create(email="sharee@example.com")
     list_ = List.objects.create()
     response = self.client.post(f'/lists/lists/{list_.id}/share', data={
-      'sharee_email': 'sharee@example.com'
+      'sharee': 'sharee@example.com'
     })
     self.assertRedirects(response, f'/lists/{list_.id}/')
 
@@ -199,7 +200,7 @@ class ShareListTest(TestCase):
     sharee = User.objects.create(email="sharee@example.com")
     self.client.post(f'/lists/lists/{list_.id}/share', 
       data={
-        'sharee_email': sharee.email
+        'sharee': sharee.email
       }
     )
     self.assertIn(sharee, list_.shared_with.all())
@@ -212,7 +213,7 @@ class ShareListTest(TestCase):
   #   sharee = User.objects.create(email="sharee@example.com")
   #   response = self.client.post(f'/lists/lists/{list_.id}/share', 
   #     data={
-  #       'sharee_email': sharee.email
+  #       'sharee': sharee.email
   #     }
   #   )
   #   parsed = lxml.html.fromstring(response.content)

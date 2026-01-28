@@ -28,6 +28,18 @@
       </form>
     </div>
   </div>
+  <div class="row justify-content-right">
+    <div class="col-lg-6">
+      <p>Shared with:</p>
+      <ul>
+        {% for user in list.shared_with.all %}
+          <li>{{ user.email }}</li>
+        {% empty %}
+          <li>No one</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
 {% endblock %}
 
 {% block scripts %}
