@@ -206,17 +206,14 @@ class ShareListTest(TestCase):
     self.assertIn(sharee, list_.shared_with.all())
 
 
-  # def test_sharee_displayed_after_sharing_a_list(self):
-  #   list_ = List.objects.create()
-  #   sharer = User.objects.create(email="sharer@example.com")
-  #   self.client.force_login(sharer)
-  #   sharee = User.objects.create(email="sharee@example.com")
-  #   response = self.client.post(f'/lists/lists/{list_.id}/share', 
-  #     data={
-  #       'sharee': sharee.email
-  #     }
-  #   )
-  #   parsed = lxml.html.fromstring(response.content)
+  def test_sharee_displayed_after_sharing_a_list(self):
+    list_ = List.objects.create()
+    sharer = User.objects.create(email="sharer@example.com")
+    self.client.force_login(sharer)
+    sharee = User.objects.create(email="sharee@example.com")
+    list_.shared_with.add(sharee)
+    response = self.client.get(f'/lists/{list_.id}/')
+    self.assertContains(response, "sharee@example.com")
     
     
   # def test_sharer_displayed_after_sharing_a_list(self):

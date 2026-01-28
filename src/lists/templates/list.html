@@ -33,7 +33,7 @@
       <p>Shared with:</p>
       <ul>
         {% for user in list.shared_with.all %}
-          <li>{{ user.email }}</li>
+          <li class="list-sharee">{{ user.email }}</li>
         {% empty %}
           <li>No one</li>
         {% endfor %}
