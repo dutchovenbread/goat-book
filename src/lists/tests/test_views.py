@@ -234,6 +234,12 @@ class ShareListTest(TestCase):
     self.assertContains(response, "sharee@example.com")
     
     
-  # def test_sharer_displayed_after_sharing_a_list(self):
-  #   list_ = List.objects.create()
-  #   sharer = User.objects.create(email="sharer@example.com")
+  def test_sharer_displayed_after_sharing_a_list(self):
+    sharer = User.objects.create(email="sharer@example.com")
+    sharee = User.objects.create(email="sharee@example.com")
+    list_ = List.objects.create(owner=sharer)
+    Item.objects.create(list=list_, text="Item in Shared List") 
+    list_.shared_with.add(sharee)
+    response = self.client.get(f'/lists/{list_.id}/')
+    self.assertContains(response, "sharer@example.com")
+
