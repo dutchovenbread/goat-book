@@ -30,6 +30,6 @@ class List(models.Model):
 
   shared_with = models.ManyToManyField(
     'accounts.User',
-    related_name='shared_lists',
+    #related_name='shared_lists',
   )  
 

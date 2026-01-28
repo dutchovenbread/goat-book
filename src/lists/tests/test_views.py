@@ -124,6 +124,12 @@ class ListViewTest(TestCase):
     self.assertTemplateUsed(response, 'list.html')
     self.assertEqual(Item.objects.all().count(), 1)
 
+  # def test_displays_list_owner_if_list_has_owner(self):
+  #   user = User.objects.create(email="a@b.com")
+  #   list_ = List.objects.create(owner=user)
+  #   response = self.client.get(f'/lists/{list_.id}/')
+  #   self.assertContains(response, "a@b.com")
+
 class NewListTest(TestCase):
   def test_can_save_a_POST_request(self):
     other_list = List.objects.create()
@@ -183,6 +189,18 @@ class MyListsTest(TestCase):
     correct_user = User.objects.create(email="a@b.com")
     response = self.client.get('/lists/users/a@b.com/')
     self.assertEqual(response.context['owner'], correct_user)
+
+  def test_displays_lists_shared_to_user(self):
+    owner = User.objects.create(email="a@b.com")
+    sharee = User.objects.create(email="sharee@b.com")
+    list1 = List.objects.create(owner=owner)
+    Item.objects.create(list=list1, text="Entry in shared list")
+    list1.shared_with.add(sharee)
+    list2 = List.objects.create(owner=owner)
+    Item.objects.create(list=list2, text="Entry in unshared list")
+    response = self.client.get('/lists/users/sharee@b.com/')
+    self.assertContains(response, f'/lists/{list1.id}/')
+    self.assertNotContains(response, f'/lists/{list2.id}/')
 
 class ShareListTest(TestCase):
   def test_share_list_redirects_to_list_view(self):
