@@ -17,6 +17,39 @@
       </table>
     </div>
   </div>
+  <div class="row justify-content-right">
+    <div class="col-lg-6 text-end">
+      <p>Share this list:</p>
+      <form method="POST" action="{% url 'share_list' list.id %}">
+        {% csrf_token %}
+        <div class="input-group mb-3">
+          <input type="email" name="sharee" class="form-control" placeholder="your-friend@example.com">
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="row justify-content-center">
+    <div class="col-lg-6">
+      {% if list.owner %}
+        <p>Owner: 
+          <div id="id_list_owner">{{ list.owner.email }}</div>
+        </p>
+      {% else %}
+        <p>This list has no owner.</p>
+      {% endif %}
+    </div>
+  <div class="row justify-content-right">
+    <div class="col-lg-6">
+      <p>Shared with:</p>
+      <ul>
+        {% for user in list.shared_with.all %}
+          <li class="list-sharee">{{ user.email }}</li>
+        {% empty %}
+          <li>No one</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
 {% endblock %}
 
 {% block scripts %}

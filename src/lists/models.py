@@ -27,5 +27,9 @@ class List(models.Model):
   @property
   def name(self):
     return self.item_set.first().text
-  
+
+  shared_with = models.ManyToManyField(
+    'accounts.User',
+    #related_name='shared_lists',
+  )  
 
