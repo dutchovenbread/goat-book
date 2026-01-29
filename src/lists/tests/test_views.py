@@ -241,5 +241,8 @@ class ShareListTest(TestCase):
     Item.objects.create(list=list_, text="Item in Shared List") 
     list_.shared_with.add(sharee)
     response = self.client.get(f'/lists/{list_.id}/')
+    parsed = lxml.html.fromstring(response.content)
+    parsed_owner = parsed.cssselect("#id_list_owner")[0].text
     self.assertContains(response, "sharer@example.com")
+    self.assertEqual(parsed_owner, "sharer@example.com")
 
